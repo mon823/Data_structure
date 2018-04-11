@@ -17,18 +17,25 @@ ListNode *create_node(element data, ListNode *link) {	//노드를 동적 생성
 	return new_node;
 }
 
-void insert_node(ListNode **phead, ListNode *p, ListNode *new_node) {
+void insert_first(ListNode **phead, ListNode *node) {
 	if (*phead == NULL) {
-		new_node->link = NULL;
-		*phead = new_node;
-	}
-	else if (p == NULL) {
-		new_node->link = *phead;
-		*phead = new_node;
+		*phead = node;
+		node->link = node;
 	}
 	else {
-		new_node->link = p;
-		p->link = new_node;
+		node->link = (*phead)->link;
+		(*phead)->link = node;
+	}
+}
+void insert_last(ListNode **phead, ListNode *node) {
+	if (*phead == NULL) {
+		*phead = node;
+		node->link = node;
+	}
+	else {
+		node->link = (*phead)->link;
+		(*phead)->link = node;
+		*phead = node;
 	}
 }
 
@@ -42,10 +49,13 @@ void remove_node(ListNode **phead, ListNode *p, ListNode *removed) {
 
 void display(ListNode *head){
 	ListNode *p = head;
-	while (p != NULL) {
+	p = p->link;
+	while (p != head) {
 		printf("%d->", p->data);
 		p = p->link;
 	}
+	printf("%d->", p->data);
+	p = p->link;
 	printf("\n");
 }
 
@@ -84,28 +94,9 @@ ListNode *concat(ListNode *head1, ListNode *head2) {
 
 int main(void) {
 	ListNode *list1 = NULL;
-	ListNode *list2 = NULL;
-	ListNode * p;
-
-	insert_node(&list1, NULL, create_node(10, NULL));
-	insert_node(&list1, NULL, create_node(20, NULL));
-	insert_node(&list1, NULL, create_node(30, NULL));
+	insert_first(&list1, create_node(10, NULL));
+	insert_first(&list1, create_node(20, NULL));
+	insert_last(&list1, create_node(30, NULL));
 	display(list1);
-
-	remove_node(&list1, NULL, list1);
-	display(list1);
-
-	insert_node(&list2, NULL, create_node(60, NULL));
-	insert_node(&list2, NULL, create_node(70, NULL));
-	insert_node(&list2, NULL, create_node(80, NULL));
-	display(list2);
-
-	list1 = concat(list1, list2);
-	display_recur(list1);
-	printf("\n");
-
-	p = search(list1, 20);
-	printf("%d\n", p->data);
-
 	return 0;
 }
