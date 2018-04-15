@@ -1,102 +1,76 @@
 ﻿#include<stdio.h>
-#include<stdlib.h>
+#include<malloc.h>
 
 typedef int element;
+typedef struct QueueNode {
+	element item;
+	struct QueueNode *link;
+}QueueNode;
 
-typedef struct ListNode {
-	element data;
-	struct LisNode *link;
-}ListNode;
+typedef struct {
+	QueueNode *front, *rear;
+}QueueType;
 
-ListNode *create_node(element data, ListNode *link) {	//노드를 동적 생성
-	ListNode *new_node;
-	new_node = (ListNode*)malloc(sizeof(ListNode));
-	if (new_node == NULL);
-	new_node->data = data;
-	new_node->link = link;
-	return new_node;
+void error(char *message) {
+	fprintf(stderr, "%s\n", message);
+	exit(1);
 }
 
-void insert_first(ListNode **phead, ListNode *node) {
-	if (*phead == NULL) {
-		*phead = node;
-		node->link = node;
-	}
+void init(QueueType *q) {
+	q->front = q->rear = NULL;
+}
+
+int is_empty(QueueType *q) {
+	return (q->front == NULL);
+}
+
+void enqueue(QueueType *q, element item) {
+	QueueNode *temp = (QueueNode *)malloc(sizeof(QueueNode));
+	if (temp == NULL)
+		error("메모리를 할당할 수 없습니다");
 	else {
-		node->link = (*phead)->link;
-		(*phead)->link = node;
-	}
-}
-void insert_last(ListNode **phead, ListNode *node) {
-	if (*phead == NULL) {
-		*phead = node;
-		node->link = node;
-	}
-	else {
-		node->link = (*phead)->link;
-		(*phead)->link = node;
-		*phead = node;
-	}
-}
-
-void remove_node(ListNode **phead, ListNode *p, ListNode *removed) {
-	if (p == NULL)
-		*phead = (*phead)->link;
-	else
-		p->link = removed->link;
-	free(removed);
-}
-
-void display(ListNode *head){
-	ListNode *p = head;
-	p = p->link;
-	while (p != head) {
-		printf("%d->", p->data);
-		p = p->link;
-	}
-	printf("%d->", p->data);
-	p = p->link;
-	printf("\n");
-}
-
-void display_recur(ListNode *head) {
-	ListNode *p = head;
-	if (p != NULL) {
-		printf("%d->", p->data);
-		display_recur(p->link);
-	}
-}
-
-ListNode *search(ListNode *head, int x) {
-	ListNode *p = head;
-	while (p != NULL) {
-		if (p->data == x) {
-			return p;
+		temp->item = item;
+		temp->link = NULL;
+		if (is_empty(q)) {
+			q->front = temp;
+			q->rear = temp;
 		}
-		p = p->link;
-	}
-	return p;
-}
-
-ListNode *concat(ListNode *head1, ListNode *head2) {
-	ListNode *p;
-	if (head1 == NULL) return head2;
-	else if (head2 == NULL)return head1;
-	else {
-		p = head1;
-		while (p->link != NULL) {
-			p = p->link;
+		else {
+			q->rear->link = temp;
+			q->rear = temp;
 		}
-		p->link = head2;
-		return head1;
+	}
+}
+element dequeue(QueueType *q) {
+	QueueNode *temp = q->front;
+	element item;
+	if (is_empty(q))
+		error("큐가 비어 있습니다.");
+	else {
+		item = temp->item;
+		q->front = q->front->link;
+		if (q->front == NULL)
+			q->rear = NULL;
+		free(temp);
+		return item;
+	}
+}
+element peek(QueueType *q) {
+	if (is_empty(q))
+		error("큐가 비어 있읍니다.");
+	else {
+		return q->front->item;
 	}
 }
 
-int main(void) {
-	ListNode *list1 = NULL;
-	insert_first(&list1, create_node(10, NULL));
-	insert_first(&list1, create_node(20, NULL));
-	insert_last(&list1, create_node(30, NULL));
-	display(list1);
+void main(void) {
+	QueueType q;
+	init(&q);
+	enqueue(&q, 1);
+	enqueue(&q, 2);
+	enqueue(&q, 3);
+	printf("dequeue() = %d \n", dequeue(&q));
+	printf("dequeue() = %d \n", dequeue(&q));
+	printf("dequeue() = %d \n", dequeue(&q));
 	return 0;
 }
