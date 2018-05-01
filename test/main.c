@@ -1,76 +1,76 @@
 ﻿#include<stdio.h>
-#include<malloc.h>
 
-typedef int element;
-typedef struct QueueNode {
-	element item;
-	struct QueueNode *link;
-}QueueNode;
+#define MAX_ELEMENT 200
 
 typedef struct {
-	QueueNode *front, *rear;
-}QueueType;
+	int key;
+}element;
 
-void error(char *message) {
-	fprintf(stderr, "%s\n", message);
-	exit(1);
+typedef struct {
+	element heap[MAX_ELEMENT];
+	int heap_size;
+}HeapType;
+
+init(HeapType *h) {
+	h->heap_size = 0;
 }
 
-void init(QueueType *q) {
-	q->front = q->rear = NULL;
-}
+void insert_max_heap(HeapType *h, element item) {
+	int i;
+	i = ++(h->heap_size);
 
-int is_empty(QueueType *q) {
-	return (q->front == NULL);
-}
-
-void enqueue(QueueType *q, element item) {
-	QueueNode *temp = (QueueNode *)malloc(sizeof(QueueNode));
-	if (temp == NULL)
-		error("메모리를 할당할 수 없습니다");
-	else {
-		temp->item = item;
-		temp->link = NULL;
-		if (is_empty(q)) {
-			q->front = temp;
-			q->rear = temp;
-		}
-		else {
-			q->rear->link = temp;
-			q->rear = temp;
-		}
+	while ((i != 1) && (item.key > h->heap[i / 2].key)) {
+		h->heap[i] = h->heap[i / 2];
+		i /= 2;
 	}
+	h->heap[i] = item;
 }
-element dequeue(QueueType *q) {
-	QueueNode *temp = q->front;
-	element item;
-	if (is_empty(q))
-		error("큐가 비어 있습니다.");
-	else {
-		item = temp->item;
-		q->front = q->front->link;
-		if (q->front == NULL)
-			q->rear = NULL;
-		free(temp);
-		return item;
+
+element delete_max_heap(HeapType *h) {
+	int parent, child;
+	element item, temp;
+
+	item = h->heap[1];
+	temp = h->heap[(h->heap_size)--];
+	parent = 1;
+	child = 2;
+	while (child <= h->heap_size) {
+		if ((child < h->heap_size) && (h->heap[child].key < h->heap[child + 1].key)) {
+			child++;
+		}
+		if (temp.key >= h->heap[child].key) break;
+
+		h->heap[parent] = h->heap[child];
+		parent = child;
+		child *= 2;
 	}
+	h->heap[parent] = temp;
+	return item;
 }
-element peek(QueueType *q) {
-	if (is_empty(q))
-		error("큐가 비어 있읍니다.");
-	else {
-		return q->front->item;
+
+void print_heap(HeapType *h) {
+	int i;
+	for (i = 1; i <= h->heap_size; i++) {
+		printf("%d \n", h->heap[i]);
 	}
 }
 
 void main(void) {
-	QueueType q;
-	init(&q);
-	enqueue(&q, 1);
-	enqueue(&q, 2);
-	enqueue(&q, 3);
-	printf("dequeue() = %d \n", dequeue(&q));
-	printf("dequeue() = %d \n", dequeue(&q));
-	printf("dequeue() = %d \n", dequeue(&q));
-	return 0;
+	element e1 = { 10 }, e2 = { 5 }, e3 = { 30 };
+	element e4, e5, e6;
+	HeapType heap;
+	init(&heap);
+
+	insert_max_heap(&heap, e1);
+	insert_max_heap(&heap, e2);
+	insert_max_heap(&heap, e3);
+
+	print_heap(&heap);
+
+	e4 = delete_max_heap(&heap);
+	printf("< %d >", e4.key);
+	e5 = delete_max_heap(&heap);
+	printf("< %d >", e5.key);
+	e6 = delete_max_heap(&heap);
+	printf("< %d >", e6.key);
 }
