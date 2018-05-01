@@ -55,22 +55,32 @@ void print_heap(HeapType *h) {
 	}
 }
 
+void heap_sort(element a[], int n) {
+	int i;
+	HeapType h;
+
+	init(&h);
+	for (i = 0; i < n; i++) {
+		insert_max_heap(&h, a[i]);
+	}
+	for (i = (n - 1); i >= 0; i--) {
+		a[i] = delete_max_heap(&h);
+	}
+}
+
+
 void main(void) {
-	element e1 = { 10 }, e2 = { 5 }, e3 = { 30 };
-	element e4, e5, e6;
-	HeapType heap;
-	init(&heap);
-
-	insert_max_heap(&heap, e1);
-	insert_max_heap(&heap, e2);
-	insert_max_heap(&heap, e3);
-
-	print_heap(&heap);
-
-	e4 = delete_max_heap(&heap);
-	printf("< %d >", e4.key);
-	e5 = delete_max_heap(&heap);
-	printf("< %d >", e5.key);
-	e6 = delete_max_heap(&heap);
-	printf("< %d >", e6.key);
+	int i, arr[101];
+	for (i = 0; i < 100; i++) {
+		arr[i] = 100 - i ;
+	}
+	for (i = 0; i < 100; i++) {
+		printf("%d \n", arr[i]);
+	}
+	printf("-------------------------------------------------------------\n");
+	heap_sort(arr, 100);
+	for (i = 0; i < 100; i++) {
+		printf("%d \n", arr[i]);
+	}
+	printf("-------------------------------------------------------------\n");
 }
