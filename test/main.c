@@ -1,86 +1,51 @@
 ﻿#include<stdio.h>
+#include<stdlib.h>
 
-#define MAX_ELEMENT 200
+#define MAX_SIZE 100
+#define SWAP(x,y,t) ( (t)=(x),(x)=(y),(y)=(t) )
 
-typedef struct {
-	int key;
-}element;
-
-typedef struct {
-	element heap[MAX_ELEMENT];
-	int heap_size;
-}HeapType;
-
-init(HeapType *h) {
-	h->heap_size = 0;
-}
-
-void insert_max_heap(HeapType *h, element item) {
-	int i;
-	i = ++(h->heap_size);
-
-	while ((i != 1) && (item.key > h->heap[i / 2].key)) {
-		h->heap[i] = h->heap[i / 2];
-		i /= 2;
-	}
-	h->heap[i] = item;
-}
-
-element delete_max_heap(HeapType *h) {
-	int parent, child;
-	element item, temp;
-
-	item = h->heap[1];
-	temp = h->heap[(h->heap_size)--];
-	parent = 1;
-	child = 2;
-	while (child <= h->heap_size) {
-		if ((child < h->heap_size) && (h->heap[child].key < h->heap[child + 1].key)) {
-			child++;
+int list[MAX_SIZE];
+int n;
+void selection_sort(int list[], int n) {
+	int i, j, least, temp;
+	for (i = 0; i < n - 1; i++) {
+		least = i;
+		for (j = i + 1; j < n; j++) {
+			if (list[j] < list[least]) least = j;
 		}
-		if (temp.key >= h->heap[child].key) break;
-
-		h->heap[parent] = h->heap[child];
-		parent = child;
-		child *= 2;
+		SWAP(list[i], list[least], temp);
 	}
-	h->heap[parent] = temp;
-	return item;
 }
 
-void print_heap(HeapType *h) {
+void insertion_sort(int list[], int n) {
+	int i, j, key;
+	for (i = 1; i < n; i++) {
+		key = list[i];
+		for (j = i - 1; j >= 0 && list[j] > key; j--)
+			list[j + 1] = list[j];
+		list[j + 1] = key;
+	}
+}
+
+void bubble_sort(int list[], int n) {
+	int i, j, temp;
+	for (i = n - 1; i > 0; i--)
+		for (j = 0; j < i; j++)
+			if (list[j] > list[j + 1])
+				SWAP(list[j], list[j + 1], temp);
+
+}
+\
+int main(void) {
 	int i;
-	for (i = 1; i <= h->heap_size; i++) {
-		printf("%d \n", h->heap[i]);
-	}
-}
+	n = MAX_SIZE;
+	for (i = 0; i < n; i++)
+		list[i] = rand() % n;
 
-void heap_sort(element a[], int n) {
-	int i;
-	HeapType h;
+	selection_sort(list, n);
+	insertion_sort(list, n);
+	bubble_sort(list, n);
 
-	init(&h);
-	for (i = 0; i < n; i++) {
-		insert_max_heap(&h, a[i]);
-	}
-	for (i = (n - 1); i >= 0; i--) {
-		a[i] = delete_max_heap(&h);
-	}
-}
-
-
-void main(void) {
-	int i, arr[101];
-	for (i = 0; i < 100; i++) {
-		arr[i] = 100 - i ;
-	}
-	for (i = 0; i < 100; i++) {
-		printf("%d \n", arr[i]);
-	}
-	printf("-------------------------------------------------------------\n");
-	heap_sort(arr, 100);
-	for (i = 0; i < 100; i++) {
-		printf("%d \n", arr[i]);
-	}
-	printf("-------------------------------------------------------------\n");
+	for (i = 0; i < n; i++)
+		printf("%d\n", list[i]);
 }
